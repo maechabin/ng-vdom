@@ -5,12 +5,28 @@ import { mount } from './mount'
 import { patch } from './patch'
 import { unmount } from './unmount'
 
+function createPropsChildren(children: VNode[] | null): Properties | null {
+  if (!(children && children.length > 0)) {
+    return null
+  }
+
+  return children.map((child: VNode) => {
+    if (child.type === null) {
+      return child.props.textContent
+    }
+    return {
+      type: child.type,
+      props: child.props,
+      children: createPropsChildren(child.children),
+    }
+  })
+}
+
 export function mountClassComponent(kit: RenderKit, vNode: VNode, container: Element | null, nextNode: Node | null): void {
   const type = vNode.type as ClassComponentType
   const props = vNode.props as Properties | null
-  const children = (props && props.c) || null
+  const children = vNode.children ? createPropsChildren(vNode.children) : null
   const meta = (vNode.meta = createEmptyMeta())
-
   const instance = (meta[COMPONENT_INSTANCE] = new type({
     ...props,
     children,
@@ -28,10 +44,8 @@ export function patchClassComponent(kit: RenderKit, lastVNode: VNode, nextVNode:
 
   const instance = meta[COMPONENT_INSTANCE]!
   const lastResult = meta[RENDER_RESULT]!
-
+  const children = lastResult ? createPropsChildren([lastResult]) : null
   const props = nextVNode.props as Properties
-  const children = (props && props.c) || null
-
   ;(instance as { props: Properties }).props = {
     ...props,
     children,
