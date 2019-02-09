@@ -34,3 +34,20 @@ export function parseEventName(prop: string): string {
   }
   return eventName
 }
+
+export function createPropsChildren(children: VNode[] | null): Properties | null {
+  if (!(children && children.length > 0)) {
+    return null
+  }
+
+  return children.map((child: VNode) => {
+    if (child.type === null) {
+      return child.props.textContent
+    }
+    return {
+      type: child.type,
+      props: child.props,
+      children: createPropsChildren(child.children),
+    }
+  })
+}

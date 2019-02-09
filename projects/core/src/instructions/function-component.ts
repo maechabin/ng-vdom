@@ -4,13 +4,13 @@ import { FunctionComponentType, Properties, RENDER_RESULT, VNode } from '../shar
 import { mount } from './mount'
 import { patch } from './patch'
 import { unmount } from './unmount'
+import { createPropsChildren } from './util'
 
 export function mountFunctionComponent(kit: RenderKit, vNode: VNode, container: Element | null, nextNode: Node | null): void {
   const type = vNode.type as FunctionComponentType
   const props = vNode.props as Properties | null
-  const children = (props && props.c) || null
-
-  const meta = vNode.meta = createEmptyMeta()
+  const children = vNode.children ? createPropsChildren(vNode.children) : null
+  const meta = (vNode.meta = createEmptyMeta())
   const inner = (meta[RENDER_RESULT] = normalize(type({ ...props, children })))
 
   mount(kit, inner, container, nextNode)

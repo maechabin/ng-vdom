@@ -4,23 +4,7 @@ import { ClassComponentType, COMPONENT_INSTANCE, Properties, RENDER_RESULT, VNod
 import { mount } from './mount'
 import { patch } from './patch'
 import { unmount } from './unmount'
-
-function createPropsChildren(children: VNode[] | null): Properties | null {
-  if (!(children && children.length > 0)) {
-    return null
-  }
-
-  return children.map((child: VNode) => {
-    if (child.type === null) {
-      return child.props.textContent
-    }
-    return {
-      type: child.type,
-      props: child.props,
-      children: createPropsChildren(child.children),
-    }
-  })
-}
+import { createPropsChildren } from './util'
 
 export function mountClassComponent(kit: RenderKit, vNode: VNode, container: Element | null, nextNode: Node | null): void {
   const type = vNode.type as ClassComponentType
