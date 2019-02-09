@@ -22,7 +22,7 @@ export function patchFunctionComponent(kit: RenderKit, lastVNode: VNode, nextVNo
 
   const type = nextVNode.type as FunctionComponentType
   const props = nextVNode.props as Properties
-  const children = (props && props.c) || null
+  const children = nextVNode.children ? createPropsChildren(nextVNode.children) : null
   const lastInner = meta[RENDER_RESULT]!
   const nextInner = (meta[RENDER_RESULT] = normalize(type({ ...props, children })))
 

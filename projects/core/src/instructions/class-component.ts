@@ -28,8 +28,8 @@ export function patchClassComponent(kit: RenderKit, lastVNode: VNode, nextVNode:
 
   const instance = meta[COMPONENT_INSTANCE]!
   const lastResult = meta[RENDER_RESULT]!
-  const children = lastResult ? createPropsChildren([lastResult]) : null
   const props = nextVNode.props as Properties
+  const children = nextVNode.children ? createPropsChildren(nextVNode.children) : null
   ;(instance as { props: Properties }).props = {
     ...props,
     children,
