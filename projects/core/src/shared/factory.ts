@@ -5,7 +5,7 @@ import { ChildDef, ClassComponentType, ElementDef, FunctionComponentType } from 
 export function createElement<P = any>(type: ClassComponentType<P> | FunctionComponentType<P> | Type<any> | string, props?: P, ...children: ChildDef[]): ElementDef<P> {
   return {
     type,
-    props: Object.assign({}, props, { c: children }) || null,
+    props: props || null,
     children,
   }
 }
