@@ -9,9 +9,9 @@ import { createPropsChildren } from './util'
 export function mountFunctionComponent(kit: RenderKit, vNode: VNode, container: Element | null, nextNode: Node | null): void {
   const type = vNode.type as FunctionComponentType
   const props = vNode.props as Properties | null
-  const children = vNode.children ? createPropsChildren(vNode.children) : null
+  const vChildren = vNode.children ? createPropsChildren(vNode.children) : null
   const meta = (vNode.meta = createEmptyMeta())
-  const inner = (meta[RENDER_RESULT] = normalize(type({ ...props, children })))
+  const inner = (meta[RENDER_RESULT] = normalize(type({ ...props, children: vChildren })))
 
   mount(kit, inner, container, nextNode)
   vNode.native = inner.native
@@ -22,9 +22,9 @@ export function patchFunctionComponent(kit: RenderKit, lastVNode: VNode, nextVNo
 
   const type = nextVNode.type as FunctionComponentType
   const props = nextVNode.props as Properties
-  const children = nextVNode.children ? createPropsChildren(nextVNode.children) : null
+  const vChildren = nextVNode.children ? createPropsChildren(nextVNode.children) : null
   const lastInner = meta[RENDER_RESULT]!
-  const nextInner = (meta[RENDER_RESULT] = normalize(type({ ...props, children })))
+  const nextInner = (meta[RENDER_RESULT] = normalize(type({ ...props, children: vChildren })))
 
   patch(kit, lastInner, nextInner)
   nextVNode.native = nextInner.native

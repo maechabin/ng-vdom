@@ -9,11 +9,11 @@ import { createPropsChildren } from './util'
 export function mountClassComponent(kit: RenderKit, vNode: VNode, container: Element | null, nextNode: Node | null): void {
   const type = vNode.type as ClassComponentType
   const props = vNode.props as Properties | null
-  const children = vNode.children ? createPropsChildren(vNode.children) : null
+  const vChildren = vNode.children ? createPropsChildren(vNode.children) : null
   const meta = (vNode.meta = createEmptyMeta())
   const instance = (meta[COMPONENT_INSTANCE] = new type({
     ...props,
-    children,
+    children: vChildren,
   }))
   const inner = (meta[RENDER_RESULT] = normalize(instance.render()))
 
@@ -29,10 +29,10 @@ export function patchClassComponent(kit: RenderKit, lastVNode: VNode, nextVNode:
   const instance = meta[COMPONENT_INSTANCE]!
   const lastResult = meta[RENDER_RESULT]!
   const props = nextVNode.props as Properties
-  const children = nextVNode.children ? createPropsChildren(nextVNode.children) : null
+  const vChildren = nextVNode.children ? createPropsChildren(nextVNode.children) : null
   ;(instance as { props: Properties }).props = {
     ...props,
-    children,
+    children: vChildren,
   }
   const nextResult = (meta[RENDER_RESULT] = normalize(instance!.render()))
 
