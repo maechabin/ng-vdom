@@ -5,7 +5,7 @@ import { COMPONENT_FACTORY_RESOLVER, INJECTOR, RenderKit } from '../shared/rende
 import { ANGULAR_INPUT_MAP, ANGULAR_OUTPUT_MAP, CHILD_ANCHOR, CHILD_DIFFER, COMPONENT_REF, Properties, PROP_DIFFER, VNode } from '../shared/types'
 import { mountArray, patchArray } from './array'
 import { createComment, insertBefore, parentNodeOf } from './render'
-import { createChildDiffer, createPropDiffer, isEventLikeProp, parseEventName } from './util'
+import { createChildDiffer, createPropsChildren, createPropDiffer, isEventLikeProp, parseEventName } from './util'
 
 export function mountAngularComponent(kit: RenderKit, vNode: VNode, container: Element | null, nextNode: Node | null): void {
   const resolver = kit[COMPONENT_FACTORY_RESOLVER]
@@ -20,8 +20,12 @@ export function mountAngularComponent(kit: RenderKit, vNode: VNode, container: E
   const childNodes = mountArray(kit, children)
   const anchor = meta[CHILD_ANCHOR] = createComment(kit, '')
   const ref = meta[COMPONENT_REF] = factory.create(injector, [[...childNodes, anchor]])
-  patchProperties(kit, vNode, vNode.props)
 
+  const vChildren = vNode.children ? createPropsChildren(vNode.children) : null
+  patchProperties(kit, vNode, {
+    ...vNode.props,
+    children: vChildren,
+  })
   ref.changeDetectorRef.detectChanges()
 
   const element = vNode.native = ref.injector.get(ElementRef as Type<ElementRef>).nativeElement
@@ -41,8 +45,13 @@ export function patchAngularComponent(kit: RenderKit, lastVNode: VNode, nextVNod
 
   nextVNode.native = lastVNode.native! as Element
 
+  const vChildren = nextVNode.children ? createPropsChildren(nextVNode.children) : null
+
   if (lastProps !== nextProps) {
-    patchProperties(kit, nextVNode, nextProps)
+    patchProperties(kit, nextVNode, {
+      ...nextProps,
+      children: vChildren,
+    })
   }
 
   const ref = meta[COMPONENT_REF]!
