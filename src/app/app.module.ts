@@ -2,22 +2,14 @@ import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
 import { VDomModule } from 'ng-vdom'
 
-import { AppComponent } from './app.component'
+import { AngularComponent, AppComponent } from './app.component'
 import { HelloComponent } from './hello.component'
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HelloComponent,
-  ],
-  imports: [
-    BrowserModule,
-    VDomModule,
-  ],
+  declarations: [AppComponent, AngularComponent, HelloComponent],
+  imports: [BrowserModule, VDomModule],
   providers: [],
-  entryComponents: [
-    HelloComponent,
-  ],
+  entryComponents: [HelloComponent, AngularComponent],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
