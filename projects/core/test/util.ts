@@ -1,5 +1,17 @@
-import { Component as NgComponent, ComponentFactoryResolver, EventEmitter, Injector, Input, IterableDiffers, KeyValueDiffers, NgModule, Output, RendererFactory2 } from '@angular/core'
+import {
+  Component as NgComponent,
+  ComponentFactoryResolver,
+  EventEmitter,
+  Injector,
+  Input,
+  IterableDiffers,
+  KeyValueDiffers,
+  NgModule,
+  Output,
+  RendererFactory2,
+} from '@angular/core'
 import { inject } from '@angular/core/testing'
+import { Renderable } from '../src/integration/renderable'
 import { Component } from '../src/shared/component'
 import { createElement as h } from '../src/shared/factory'
 import { isFunc } from '../src/shared/lang'
@@ -98,8 +110,18 @@ export class TestAngularContent {
   @Output() changes = new EventEmitter()
 }
 
+@NgComponent({
+  template: '',
+})
+export class TestAngularChildComponent extends Renderable {
+  @Input() children: any
+  render() {
+    return h('p', null, this.children)
+  }
+}
+
 @NgModule({
-  declarations: [ TestAngularProps, TestAngularContent ],
-  entryComponents: [ TestAngularProps, TestAngularContent ],
+  declarations: [TestAngularProps, TestAngularContent, TestAngularChildComponent],
+  entryComponents: [TestAngularProps, TestAngularContent, TestAngularChildComponent],
 })
 export class TestModule { }

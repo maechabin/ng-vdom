@@ -5,7 +5,15 @@ import { createElement as h } from '../../src/shared/factory'
 import { normalize as n } from '../../src/shared/node'
 import { getCurrentRenderKit, RenderKit } from '../../src/shared/render-kit'
 import { COMPONENT_INSTANCE, COMPONENT_REF, VNode } from '../../src/shared/types'
-import { isCommentNode, setUpContext, EMPTY_COMMENT, TestAngularContent, TestAngularProps, TestModule } from '../util'
+import {
+  isCommentNode,
+  setUpContext,
+  EMPTY_COMMENT,
+  TestAngularChildComponent,
+  TestAngularContent,
+  TestAngularProps,
+  TestModule,
+} from '../util'
 
 describe('mount instruction', () => {
   let container: HTMLElement
@@ -264,6 +272,27 @@ describe('mount instruction', () => {
       expect(container.innerHTML).toBe(`<p>42</p>`)
     })
 
+    it('should mount with props.children', () => {
+      // setup
+      const children = 'children'
+      class ChildComponent extends Component<any> {
+        render() {
+          return h('p', null, this.props.children)
+        }
+      }
+      function TransclusionComponent() {
+        return h(ChildComponent, null, children)
+      }
+      input = n(h(TransclusionComponent))
+
+      // exercise
+      mount(kit, input, container, null)
+
+      // verify
+      expect(input.native).not.toBeNull()
+      expect(container.innerHTML).toBe(`<p>${children}</p>`)
+    })
+
     it('should invoke didMount callback', () => {
       input = n(h(DidMountComponent))
       mount(kit, input, container, null)
@@ -306,6 +335,25 @@ describe('mount instruction', () => {
       expect(input.native).not.toBeNull()
       expect(container.innerHTML).toBe(`<p>42</p>`)
     })
+
+    it('should mount with props.children', () => {
+      // setup
+      const children = 'children'
+      function ChildComponent(props: any) {
+        return h('p', null, props.children)
+      }
+      function TransclusionComponent() {
+        return h(ChildComponent, null, children)
+      }
+      input = n(h(TransclusionComponent))
+
+      // exercise
+      mount(kit, input, container, null)
+
+      // verify
+      expect(input.native).not.toBeNull()
+      expect(container.innerHTML).toBe(`<p>${children}</p>`)
+    })
   })
 
   describe('Angular Component', () => {
@@ -346,6 +394,19 @@ describe('mount instruction', () => {
 
       expect(input.native).not.toBeNull()
       expect(container.innerHTML).toBe(`<ng-component><div>42<!----></div></ng-component>`)
+    })
+
+    it('should mount with props.children', () => {
+      // setup
+      const children = 'children'
+      input = n(h(TestAngularChildComponent, null as any, children))
+
+      // exercise
+      mount(kit, input, container, null)
+
+      // verify
+      expect(input.native).not.toBeNull()
+      expect(container.innerHTML).toBe(`<ng-component><p>${children}</p></ng-component>`)
     })
   })
 
