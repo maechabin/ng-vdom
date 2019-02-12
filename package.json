@@ -8,6 +8,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "test:lib": "ng test core --no-watch --code-coverage --progress=false",
+    "test:lib:w": "ng test core --watch --code-coverage --progress=false",
     "test:site": "ng test site --no-watch --code-coverage --progress=false",
     "start:demo": "webpack-dev-server --config projects/react-demo/webpack.config.js",
     "build:lib:core": "ng build core",
