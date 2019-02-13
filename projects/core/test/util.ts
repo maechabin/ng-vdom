@@ -9,6 +9,7 @@ import {
   NgModule,
   Output,
   RendererFactory2,
+  Type,
 } from '@angular/core'
 import { inject } from '@angular/core/testing'
 import { Renderable } from '../src/integration/renderable'
@@ -17,7 +18,7 @@ import { createElement as h } from '../src/shared/factory'
 import { isFunc } from '../src/shared/lang'
 import { normalize as n } from '../src/shared/node'
 import { setCurrentRenderKit } from '../src/shared/render-kit'
-import { ChildDef, NodeDef, StateChange } from '../src/shared/types'
+import { ChildDef, ClassComponentType, FunctionComponentType, NodeDef, StateChange } from '../src/shared/types'
 import { UpdateQueue } from '../src/shared/update-queue'
 
 export const EMPTY_COMMENT = '<!---->'
@@ -49,6 +50,12 @@ export function createClassComponentNode(render: () => NodeDef = defaultRender) 
   }
 
   return n(h(TestComponent))
+}
+
+export function createTransClustionComponentNode(component: ClassComponentType | FunctionComponentType | Type<any>, children: any) {
+  return function TransclusionComponent() {
+    return h(component, null, children)
+  }
 }
 
 export function createFunctionComponentNode() {

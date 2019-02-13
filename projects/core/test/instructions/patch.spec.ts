@@ -2,11 +2,25 @@ import { async, TestBed } from '@angular/core/testing'
 import { mount } from '../../src/instructions/mount'
 import { patch } from '../../src/instructions/patch'
 import { removeChild } from '../../src/instructions/render'
+import { Component } from '../../src/shared/component'
 import { createElement as h } from '../../src/shared/factory'
 import { normalize as n } from '../../src/shared/node'
 import { getCurrentRenderKit, RenderKit } from '../../src/shared/render-kit'
 import { COMPONENT_REF, VNode } from '../../src/shared/types'
-import { createClassComponentNode, createFunctionComponentNode, createIntrinsicNode, createTextNode, createVoidNode, setUpContext, EMPTY_COMMENT, TestAngularContent, TestAngularProps, TestModule } from '../util'
+import {
+  createClassComponentNode,
+  createFunctionComponentNode,
+  createIntrinsicNode,
+  createTextNode,
+  createTransClustionComponentNode,
+  createVoidNode,
+  setUpContext,
+  EMPTY_COMMENT,
+  TestAngularChildComponent,
+  TestAngularContent,
+  TestAngularProps,
+  TestModule,
+} from '../util'
 
 const TEXT_DEFAULT_CONTENT = 'foo'
 const COMPOSITE_DEFAULT_CONTENT = '<p class="foo">42</p>'
@@ -164,6 +178,27 @@ describe('patch instruction', () => {
         expect(next.native).not.toBe(previous.native)
         expect(container.innerHTML).toBe('1')
       })
+
+      it('should mount with props.children', () => {
+        // setup
+        const previousChildren = 'previous'
+        const nextChildren = 'next'
+        class ChildComponent extends Component<any> {
+          render() {
+            return h('p', null, this.props.children)
+          }
+        }
+        previous = n(h(createTransClustionComponentNode(ChildComponent, previousChildren)))
+        next = n(h(createTransClustionComponentNode(ChildComponent, nextChildren)))
+
+        // exercise
+        mount(kit, previous, container, null)
+        patch(kit, previous, next)
+
+        // verify
+        expect(next.native).not.toBeNull()
+        expect(container.innerHTML).toBe(`<p>${nextChildren}</p>`)
+      })
     })
 
     describe('Function Component', () => {
@@ -188,6 +223,25 @@ describe('patch instruction', () => {
 
         expect(next.native).not.toBe(previous.native)
         expect(container.innerHTML).toBe('1')
+      })
+
+      it('should mount with props.children', () => {
+        // setup
+        const previousChildren = 'previous'
+        const nextChildren = 'next'
+        function ChildComponent(props: any) {
+          return h('p', null, props.children)
+        }
+        previous = n(h(createTransClustionComponentNode(ChildComponent, previousChildren)))
+        next = n(h(createTransClustionComponentNode(ChildComponent, nextChildren)))
+
+        // exercise
+        mount(kit, previous, container, null)
+        patch(kit, previous, next)
+
+        // verify
+        expect(next.native).not.toBeNull()
+        expect(container.innerHTML).toBe(`<p>${nextChildren}</p>`)
       })
     })
 
@@ -229,6 +283,22 @@ describe('patch instruction', () => {
 
         expect(next.native).toBe(previous.native)
         expect(container.innerHTML).toBe(`<ng-component><div>84<!----></div></ng-component>`)
+      })
+
+      it('should mount with props.children', () => {
+        // setup
+        const previousChildren = 'previous'
+        const nextChildren = 'next'
+        previous = n(h(createTransClustionComponentNode(TestAngularChildComponent, previousChildren)))
+        next = n(h(createTransClustionComponentNode(TestAngularChildComponent, nextChildren)))
+
+        // exercise
+        mount(kit, previous, container, null)
+        patch(kit, previous, next)
+
+        // verify
+        expect(next.native).not.toBe(previous.native)
+        expect(container.innerHTML).toBe(`<ng-component><p>${nextChildren}</p></ng-component>`)
       })
     })
   })
