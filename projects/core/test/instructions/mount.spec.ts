@@ -399,7 +399,10 @@ describe('mount instruction', () => {
     it('should mount with props.children', () => {
       // setup
       const children = 'children'
-      input = n(h(TestAngularChildComponent, null as any, children))
+      function TransclusionComponent() {
+        return h(TestAngularChildComponent, null as any, children)
+      }
+      input = n(h(TransclusionComponent))
 
       // exercise
       mount(kit, input, container, null)
