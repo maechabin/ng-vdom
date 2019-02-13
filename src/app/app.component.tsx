@@ -80,7 +80,10 @@ function FunctionComponent(props: any) {
     <div>
       <h2>Function Component</h2>
       <p>props.title => {title}</p>
-      <div>{children}</div>
+      <div>
+        {children[0]}
+        {children[1]}
+      </div>
     </div>
   )
 }
