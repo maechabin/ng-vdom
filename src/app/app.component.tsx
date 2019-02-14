@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core'
-import { Component as C, createElement as h, Renderable } from 'ng-vdom'
+import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { createElement as h, Component as C, Renderable } from 'ng-vdom'
 import { HelloComponent } from './hello.component'
 
 @Component({
